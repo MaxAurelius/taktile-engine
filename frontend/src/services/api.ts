@@ -11,7 +11,7 @@ export interface StrategyBlueprint {
 export interface ExecutionTrace {
   decision: 'APPROVE' | 'BLOCK' | 'REVIEW';
   path: { nodeId: string, edgeId?: string }[];
-  node_outputs: Record<string, any>;
+  node_outputs: Record<string, unknown>;
   precision: number;
   recall: number;
 }

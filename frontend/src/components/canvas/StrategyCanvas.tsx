@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useCallback, useMemo } from 'react';
-import ReactFlow, { Controls, Background, Node, Edge, useReactFlow, Connection } from 'reactflow';
+import ReactFlow, { Controls, Background, Node, useReactFlow, Connection } from 'reactflow';
 import 'reactflow/dist/style.css';
 
 import useCanvasStore from '@/store/canvasStore';
@@ -10,6 +10,7 @@ import StrategyNode from '../nodes/StrategyNode';
 import RuleNode from '../nodes/RuleNode';
 import LogicNode from '../nodes/LogicNode';
 import ModelNode from '../nodes/ModelNode';
+import { ComponentLibraryItem } from '@/lib/types'; // <-- IMPORT THE NEW TYPE
 
 const nodeTypes = { 
   strategyNode: StrategyNode,
@@ -50,14 +51,9 @@ const StrategyCanvas = () => {
     const sourceNode = nodes.find(node => node.id === connection.source);
     const targetNode = nodes.find(node => node.id === connection.target);
 
-    // 1. Basic validation
     if (!sourceNode || !targetNode || sourceNode.id === targetNode.id) return false;
-
-    // 2. Source-specific Rules
-    if (sourceNode.data.type === 'Action') return false; // Action nodes cannot be a source
-
-    // 3. Target-specific Rules
-    if (targetNode.data.type === 'Input') return false; // Input nodes cannot be a target
+    if (sourceNode.data.type === 'Action') return false;
+    if (targetNode.data.type === 'Input') return false;
     
     const handleIsTaken = edges.some(e => e.target === connection.target && e.targetHandle === connection.targetHandle);
     if (handleIsTaken) return false;
@@ -69,7 +65,6 @@ const StrategyCanvas = () => {
         }
     }
     
-    // 4. Model-specific Rule
     if (targetNode.data.type === 'Model') {
         const sourceLabel = sourceNode.data.label;
         const handleId = connection.targetHandle;
@@ -107,17 +102,20 @@ const StrategyCanvas = () => {
           'Feature': 'strategyNode',
           'Action': 'strategyNode',
       };
+      
+      // --- FIX: NO LONGER USING 'as any' ---
+      const newNodeData = {
+          label: componentDetails.label,
+          type: componentDetails.type,
+          icon: componentDetails.icon,
+          ...(componentDetails.type === 'Rule' && { value: 0, outputs: componentDetails.outputs }),
+      };
 
       const newNode: Node = {
         id: getId(),
         type: nodeTypeMap[componentDetails.type] || 'strategyNode',
         position,
-        data: { 
-          label: componentDetails.label,
-          type: componentDetails.type,
-          icon: componentDetails.icon,
-          ...(componentDetails.type === 'Rule' && { value: 0, outputs: (componentDetails as any).outputs }),
-        },
+        data: newNodeData,
       };
 
       addNode(newNode);

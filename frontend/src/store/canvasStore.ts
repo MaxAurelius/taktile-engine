@@ -17,7 +17,7 @@ type RFState = {
   activeEdgeId: string | null;
   currentTransaction: Transaction | null;
   lastDecision: Decision | null;
-  nodeOutputs: Record<string, any>;
+  nodeOutputs: Record<string, unknown>;
   onNodesChange: OnNodesChange;
   onEdgesChange: OnEdgesChange;
   onConnect: OnConnect;
@@ -26,8 +26,8 @@ type RFState = {
   runSimulation: () => void;
   pauseSimulation: () => void;
   resetSimulation: () => void;
-  updateNodeData: (nodeId: string, data: any) => void;
-  processTransactionResult: (decision: Decision, isFraud: boolean, outputs: Record<string, any>, precision: number, recall: number) => void;
+  updateNodeData: (nodeId: string, data: Record<string, unknown>) => void;
+  processTransactionResult: (decision: Decision, isFraud: boolean, outputs: Record<string, unknown>, precision: number, recall: number) => void;
   setActiveElements: (nodeId: string | null, edgeId: string | null) => void;
   setCurrentTransaction: (transaction: Transaction | null) => void;
   generateBlueprint: () => StrategyBlueprint;
