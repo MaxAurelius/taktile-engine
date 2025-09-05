@@ -1,19 +1,21 @@
+"use client";
+
 import React from 'react';
 
 interface NodeOutputDisplayProps {
-  // FIX: Replace 'any' with a specific, type-safe definition.
-  data: Record<string, unknown> | null | undefined;
+  // Allow 'unknown' to make the component robust
+  data: unknown; 
   placeholder?: React.ReactNode;
 }
 
 const NodeOutputDisplay = ({ data, placeholder }: NodeOutputDisplayProps) => {
-  // If there's no data or the data object is empty, render the placeholder.
-  if (!data || Object.keys(data).length === 0) {
-    // FIX: Cleaner return logic for the placeholder.
+  // Type guard to ensure data is a usable object before processing
+  const isDataDisplayable = typeof data === 'object' && data !== null && Object.keys(data).length > 0;
+
+  if (!isDataDisplayable) {
     return placeholder ? <>{placeholder}</> : null;
   }
 
-  // Otherwise, map over the key-value pairs and display them.
   return (
     <div className="space-y-1">
       {Object.entries(data).map(([key, value]) => (
