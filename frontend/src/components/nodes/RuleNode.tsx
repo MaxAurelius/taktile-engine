@@ -39,12 +39,16 @@ const RuleNode = ({ id, data, selected }: NodeProps<RuleNodeData>) => {
     deleteNodeAndEdges(id);
   };
   
-  
   const getBorderStyle = () => {
     if (selected) return 'border-sky-500 ring-2 ring-sky-300';
     if (isActive) return 'border-blue-500 shadow-lg shadow-blue-500/50';
     return 'border-gray-300';
   };
+  
+  // --- NEW: TYPE GUARD ---
+  // This constant checks if outputData is a valid, non-empty object.
+  // TypeScript knows that inside any block that uses this, outputData is safe to use.
+  const isDataDisplayable = typeof outputData === 'object' && outputData !== null && Object.keys(outputData).length > 0;
 
   return (
     <div className={`group relative rounded-md border-2 bg-white shadow-md w-60 transition-all ${getBorderStyle()}`}>
@@ -72,8 +76,10 @@ const RuleNode = ({ id, data, selected }: NodeProps<RuleNodeData>) => {
         </div>
       </div>
       
-      {outputData && Object.keys(outputData).length > 0 && (
+      {/* --- FIX: USE THE TYPE GUARD FOR CONDITIONAL RENDERING --- */}
+      {isDataDisplayable && (
           <div className="space-y-1 p-3 border-b border-gray-200">
+            {/* Pass the now-safe outputData to the display component */}
             <NodeOutputDisplay data={outputData} />
           </div>
       )}
