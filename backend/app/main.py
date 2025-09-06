@@ -30,8 +30,8 @@ engine = ExecutionEngine()
 
 origins = [
     "http://localhost:3000",
-     "https://taktile-engine.xyz",
-     "https://taktile-engine.vercel.app"
+     "https://www.taktile-engine.xyz",
+     "https://www.taktile-engine.vercel.app"
 ]
 
 app.add_middleware(
