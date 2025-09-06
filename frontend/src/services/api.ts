@@ -1,7 +1,7 @@
 import { Node, Edge } from 'reactflow';
 import { Transaction } from '@/lib/mockData';
 
-const API_BASE_URL = 'https://taktile-engine-backend.onrender.com';
+const API_BASE_URL = 'https://taktile-engine-api-486456268199.europe-west1.run.app';
 
 export interface StrategyBlueprint {
   nodes: Node[];
