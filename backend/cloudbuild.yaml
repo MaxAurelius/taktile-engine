@@ -1,0 +1,27 @@
+steps:
+  # 1. Build the container image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'europe-west1-docker.pkg.dev/$PROJECT_ID/taktile-engine/api:$COMMIT_SHA', '.']
+    # This command is run from within the /backend directory
+
+  # 2. Push the container image to Google Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'europe-west1-docker.pkg.dev/$PROJECT_ID/taktile-engine/api:$COMMIT_SHA']
+
+  # 3. Deploy the new image to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'taktile-engine-api' # The name of your Cloud Run service
+      - '--image'
+      - 'europe-west1-docker.pkg.dev/$PROJECT_ID/taktile-engine/api:$COMMIT_SHA'
+      - '--region'
+      - 'europe-west1' # Choose a region, e.g., europe-west1 (Belgium)
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated' # Makes the API public
+
+images:
+  - 'europe-west1-docker.pkg.dev/$PROJECT_ID/taktile-engine/api:$COMMIT_SHA'
