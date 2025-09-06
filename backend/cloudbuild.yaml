@@ -1,13 +1,18 @@
 steps:
   # 1. Build the container image
   - name: 'gcr.io/cloud-builders/docker'
+    # NEW: Set the working directory for this step
+    dir: 'backend' 
     args: ['build', '-t', 'europe-west1-docker.pkg.dev/$PROJECT_ID/taktile-engine/api:$COMMIT_SHA', '.']
 
   # 2. Push the container image to Google Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
+    # NEW: Set the working directory for this step as well
+    dir: 'backend' 
     args: ['push', 'europe-west1-docker.pkg.dev/$PROJECT_ID/taktile-engine/api:$COMMIT_SHA']
 
   # 3. Deploy the new image to Cloud Run
+  # (This step does not need a 'dir' because it references the full image path)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
     args:
@@ -25,6 +30,5 @@ steps:
 images:
   - 'europe-west1-docker.pkg.dev/$PROJECT_ID/taktile-engine/api:$COMMIT_SHA'
 
-# --- NEW: ADD LOGGING CONFIGURATION ---
 options:
   logging: CLOUD_LOGGING_ONLY
