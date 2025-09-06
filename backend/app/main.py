@@ -9,7 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 MODEL_PATH = BASE_DIR / "./models/xgboost_v1.joblib"
-FEATURE_STORE_PATH = BASE_DIR / "../data/feature_store.parquet"
+FEATURE_STORE_PATH = BASE_DIR / "./data/feature_store.parquet"
 NAMES = ["Amelia Chen", "Ben Carter", "Chloe Davis", "David Rodriguez", "Eva Williams", "Frank Miller", "Grace Lee", "Henry Jones"]
 CATEGORIES = ["Groceries", "Utilities", "Transport", "Dining", "Software", "Travel", "Electronics", "Books"]
 
