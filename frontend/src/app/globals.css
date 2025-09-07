@@ -24,3 +24,12 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.react-flow__node {
+  color: #111827; /* A dark gray, similar to text-gray-900 */
+}
+
+.react-flow__edge-path,
+.react-flow__edge-interaction {
+  pointer-events: all !important;
+}
