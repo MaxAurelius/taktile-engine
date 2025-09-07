@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { Connection, Edge, EdgeChange, Node, NodeChange, addEdge, OnNodesChange, OnEdgesChange, OnConnect, applyNodeChanges, applyEdgeChanges } from 'reactflow';
 import { Transaction } from '@/lib/mockData';
 import { StrategyBlueprint, api } from '@/services/api';
+import { defaultNodes, defaultEdges } from '@/lib/default-layout';
 
 export type Decision = 'APPROVE' | 'BLOCK' | 'REVIEW';
 type SimulationStatus = 'stopped' | 'running' | 'paused';
@@ -34,8 +35,8 @@ type RFState = {
 };
 
 const useCanvasStore = create<RFState>((set, get) => ({
-  nodes: [],
-  edges: [],
+  nodes: defaultNodes,
+  edges: defaultEdges,
   isLiveMode: false,
   simulationStatus: 'stopped',
   precision: 0.0,
