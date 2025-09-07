@@ -3,37 +3,45 @@ from collections import deque
 from typing import Dict, List, Any, Tuple
 from .schemas import StrategyBlueprint, Transaction, Node, ExecutionTrace, ExecutionStep
 from .logic.registry import NODE_LOGIC_REGISTRY
+from google.cloud import firestore
+from google.cloud.firestore_v1.base_query import FieldFilter
 
 logger = logging.getLogger(__name__)
+
+# init firestore
+db = firestore.Client()
+METRICS_DOC_REF = db.collection('simulation_metrics').document('singleton')
 
 class ExecutionEngine:
 
     def __init__(self):
-        self.true_positives = 0
-        self.false_positives = 0
-        self.false_negatives = 0
-        logger.info("ExecutionEngine initialized with performance tracking.")
+        logger.info("ExecutionEngine initialized (using Firestore for state)")
+
+    def _get_metrics(self) -> Dict[str, int]:
+        """Loads metrics from Firestore. Returns defaults if document doesn't exist."""
+        doc = METRICS_DOC_REF.get()
+        if not doc.exists:
+            return {"true_positives": 0, "false_positives": 0, "false_negatives": 0}
+        return doc.to_dict()
 
     def reset(self):
-        """Resets the performance metrics to zero."""
-        self.true_positives = 0
-        self.false_positives = 0
-        self.false_negatives = 0
-        logger.info("ExecutionEngine state has been reset.")
+        """Resets the metrics in Firestore to zero."""
+        logger.info("Resetting persistent metrics in Firestore.")
+        METRICS_DOC_REF.set({
+            "true_positives": 0,
+            "false_positives": 0,
+            "false_negatives": 0
+        })
 
-    def _update_metrics(self, decision: str, is_fraud: bool):
-        """Updates the confusion matrix based on the outcome."""
-        if decision == 'BLOCK' and is_fraud:
-            self.true_positives += 1
-        elif decision == 'BLOCK' and not is_fraud:
-            self.false_positives += 1
-        elif decision == 'APPROVE' and is_fraud:
-            self.false_negatives += 1
+    def _calculate_metrics(self, metrics: Dict[str, int]) -> Tuple[float, float]:
+        """Calculates precision and recall from the current metrics."""
+        tp = metrics.get("true_positives", 0)
+        fp = metrics.get("false_positives", 0)
+        fn = metrics.get("false_negatives", 0)
+        
+        precision = tp / (tp + fp) if (tp + fp) > 0 else 0.0
+        recall = tp / (tp + fn) if (tp + fn) > 0 else 0.0
 
-    def _calculate_metrics(self) -> Tuple[float, float]:
-        """Calculates precision and recall from the current state."""
-        precision = self.true_positives / (self.true_positives + self.false_positives) if (self.true_positives + self.false_positives) > 0 else 0.0
-        recall = self.true_positives / (self.true_positives + self.false_negatives) if (self.true_positives + self.false_negatives) > 0 else 0.0
         return precision, recall
 
     def execute(self, blueprint: StrategyBlueprint, transaction: Transaction) -> ExecutionTrace:
@@ -153,7 +161,21 @@ class ExecutionEngine:
         path.reverse()
         decision = nodes_map[final_decision_node_id].data.get('label', 'REVIEW') if final_decision_node_id else 'REVIEW'
 
-        self._update_metrics(decision, transaction.isFraud)
-        precision, recall = self._calculate_metrics()
+        # update counters in Firestore
+        update_payload = {}
+        if decision == 'BLOCK' and transaction.isFraud:
+            update_payload = {"true_positives": firestore.Increment(1)}
+        elif decision == 'BLOCK' and not transaction.isFraud:
+            update_payload = {"false_positives": firestore.Increment(1)}
+        elif decision == 'APPROVE' and transaction.isFraud:
+            update_payload = {"false_negatives": firestore.Increment(1)}
+        
+        if update_payload:
+            METRICS_DOC_REF.update(update_payload)
+
+        # get the latest metrics and calculate precision/recall
+        current_metrics = self._get_metrics()
+        precision, recall = self._calculate_metrics(current_metrics)
+
 
         return ExecutionTrace(decision=decision, path=path, node_outputs=node_outputs, precision=precision, recall=recall)
