@@ -7,8 +7,12 @@ import { XMarkIcon, InformationCircleIcon } from '@heroicons/react/24/solid';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
 import { nodeInfo } from '@/lib/nodeInfo';
-import TippyWrapper from '../ui/TippyWrapper';
 import NodeOutputDisplay from './NodeOutputDisplay';
+
+const logicInputs = [
+  { id: 'input_a', name: 'Input A' },
+  { id: 'input_b', name: 'Input B' }
+];
 
 const LogicNode = ({ id, data, selected }: NodeProps<{ label: string, type: string, icon: React.ElementType }>) => {
   const Icon = data.icon;
@@ -47,8 +51,6 @@ const LogicNode = ({ id, data, selected }: NodeProps<{ label: string, type: stri
         <XMarkIcon className="h-3 w-3" />
       </button>
 
-      <Handle type="target" position={Position.Left} id="input" className="!bg-gray-400 w-3 h-3" />
-
       <div className="p-3 border-b border-gray-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
@@ -56,12 +58,39 @@ const LogicNode = ({ id, data, selected }: NodeProps<{ label: string, type: stri
             <p className="text-sm font-semibold text-gray-800">{data.label}</p>
           </div>
           <Tippy content={<div className="p-1 max-w-xs">{nodeInfo[data.label] || 'No information available.'}</div>} placement="top">
-            <TippyWrapper>
+            <span className="flex items-center">
               <InformationCircleIcon className="h-5 w-5 text-gray-400 hover:text-gray-600 cursor-pointer"/>
-            </TippyWrapper>
+            </span>
           </Tippy>
         </div>
       </div>
+      
+      <div
+        className="relative border-b border-gray-200 bg-gray-50/50"
+        style={{ height: `${logicInputs.length * 28}px`, padding: '8px 0' }}
+      >
+        {logicInputs.map((input, index) => {
+          const topPosition = `${(100 / logicInputs.length) * (index + 0.5)}%`;
+          return (
+            <React.Fragment key={input.id}>
+              <div
+                className="absolute text-xs text-gray-600"
+                style={{ top: topPosition, left: '1rem', transform: 'translateY(-50%)' }}
+              >
+                {input.name}
+              </div>
+              <Handle
+                type="target"
+                position={Position.Left}
+                id={input.id}
+                className="!bg-gray-400"
+                style={{ top: topPosition }}
+              />
+            </React.Fragment>
+          )
+        })}
+      </div>
+      
       <div className="p-3 bg-gray-50" style={{minHeight: '36px'}}>
         <NodeOutputDisplay data={outputData} placeholder={<p className="text-xs text-gray-500">Awaiting inputs...</p>} />
       </div>

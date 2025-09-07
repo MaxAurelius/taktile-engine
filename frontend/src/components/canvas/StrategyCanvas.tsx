@@ -41,7 +41,7 @@ const StrategyCanvas = () => {
       ...edge,
       animated: edge.id === activeEdgeId,
       style: { 
-        stroke: edge.id === activeEdgeId ? '#2563eb' : '#a1a1aa', 
+        stroke: edge.id === activeEdgeId ? '#2563eb' : '#a1a1aa',
         strokeWidth: edge.id === activeEdgeId ? 3 : 2 
       }
     }));

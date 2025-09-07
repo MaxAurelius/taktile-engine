@@ -60,11 +60,16 @@ const StrategyNode = ({ id, data, selected }: NodeProps<{ label: string, type: s
             {Icon && <Icon className="h-5 w-5 text-gray-500" />}
             <p className="text-sm font-semibold text-gray-800">{data.label}</p>
           </div>
+          {/* <Tippy content={<div className="p-1 max-w-xs">{nodeInfo[data.label] || 'No information available.'}</div>} placement="top"> */}
+            {/* <TippyWrapper> */}
+              {/* <InformationCircleIcon className="h-5 w-5 text-gray-400 hover:text-gray-600 cursor-pointer"/> */}
+            {/* </TippyWrapper> */}
+          {/* </Tippy> */}
           <Tippy content={<div className="p-1 max-w-xs">{nodeInfo[data.label] || 'No information available.'}</div>} placement="top">
-            <TippyWrapper>
-              <InformationCircleIcon className="h-5 w-5 text-gray-400 hover:text-gray-600 cursor-pointer"/>
-            </TippyWrapper>
-          </Tippy>
+          <span className="flex items-center">
+            <InformationCircleIcon className="h-5 w-5 text-gray-400 hover:text-gray-600 cursor-pointer"/>
+          </span>
+        </Tippy>
         </div>
       </div>
       <div className="p-3 bg-gray-50" style={{ minHeight: '36px' }}>
