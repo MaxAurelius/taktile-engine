@@ -12,19 +12,19 @@ const animateTrace = async (
   setActiveElements: (nodeId: string | null, edgeId: string | null) => void
 ) => {
   setActiveElements(null, null);
-  await sleep(200);
+  await sleep(25  );
 
   for (const step of trace.path) {
     setActiveElements(step.nodeId, null);
-    await sleep(400);
+    await sleep(40);
 
     if (step.edgeId) {
       setActiveElements(step.nodeId, step.edgeId);
-      await sleep(400);
+      await sleep(40);
     }
   }
 
-  await sleep(400);
+  await sleep(25);
   setActiveElements(null, null);
 };
 
@@ -77,7 +77,7 @@ const SimulationManager = () => {
 
     let intervalId: NodeJS.Timeout | null = null;
     if (simulationStatus === 'running') {
-      intervalId = setInterval(runApiLoop, 3000); 
+      intervalId = setInterval(runApiLoop, 100); 
     } else {
       setCurrentTransaction(null);
     }
