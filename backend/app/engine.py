@@ -171,7 +171,7 @@ class ExecutionEngine:
             update_payload = {"false_negatives": firestore.Increment(1)}
         
         if update_payload:
-            METRICS_DOC_REF.update(update_payload)
+            METRICS_DOC_REF.set(update_payload, merge=True)
 
         # get the latest metrics and calculate precision/recall
         current_metrics = self._get_metrics()
