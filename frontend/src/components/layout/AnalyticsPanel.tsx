@@ -7,7 +7,7 @@ import ProfileCard from "../command-center/ProfileCard";
 import { api, ProfileData } from '@/services/api';
 
 const AnalyticsPanel = () => {
-    const { currentTransaction, lastDecision } = useCanvasStore();
+    const { currentTransaction } = useCanvasStore();
     const [profileData, setProfileData] = useState<ProfileData | null>(null);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -39,12 +39,13 @@ const AnalyticsPanel = () => {
                 <div>
                     <h2 className="text-base font-semibold text-gray-700 mb-4">LIVE DISPATCH</h2>
                     {isLoading || !profileData ? (
-                        <p>Loading Profile...</p>
+                        <div className="w-full rounded-lg border border-gray-200 bg-white p-4 shadow-sm animate-pulse">
+                            <div className="h-6 bg-gray-200 rounded w-3/4 mb-4"></div>
+                            <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                        </div>
                     ) : (
                         <ProfileCard 
-                            transaction={currentTransaction} 
                             profile={profileData}
-                            decision={lastDecision}
                         />
                     )}
                 </div>
