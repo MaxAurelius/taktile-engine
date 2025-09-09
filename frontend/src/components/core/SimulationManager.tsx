@@ -77,7 +77,7 @@ const SimulationManager = () => {
 
     let intervalId: NodeJS.Timeout | null = null;
     if (simulationStatus === 'running') {
-      intervalId = setInterval(runApiLoop, 100); 
+      intervalId = setInterval(runApiLoop, 10); 
     } else {
       setCurrentTransaction(null);
     }
