@@ -5,3 +5,6 @@ pyarrow
 scikit-learn
 xgboost
 google-cloud-firestore
+trio
+pytest
+pytest-mock
