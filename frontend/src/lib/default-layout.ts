@@ -66,7 +66,7 @@ export const defaultNodes: Node[] = [
       label: 'Threshold Gate', 
       type: 'Rule', 
       icon: ScaleIcon, 
-      value: 0.001, 
+      value: 0.75, 
       outputs: [{ id: 'true', name: '>= Threshold' }, { id: 'false', name: '< Threshold' }] 
     },
   },
